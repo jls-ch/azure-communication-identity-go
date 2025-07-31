@@ -3,8 +3,9 @@ Unofficial client library for REST APIs to Azure Communication Identity Services
 
 This library was built with Golang 1.24, earlier versions might be able to compile the code but have not been tested.
 
-# Example Usage
+[GoDoc](https://pkg.go.dev/github.com/jls-ch/azure-communication-identity-go)
 
+# Example Usage
 
 see also: [example_test.go](./example_test.go)
 
