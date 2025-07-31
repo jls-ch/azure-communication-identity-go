@@ -41,7 +41,7 @@ func main() {
 # Features & Roadmap
 
 Implemented:
-- HMAC request signing
+- HMAC request and header signing
 - [Azure Communication Services errors](https://learn.microsoft.com/en-us/rest/api/communication/identity/communication-identity/create?view=rest-communication-identity-2025-06-30&tabs=HTTP#communicationerror) 
 exposed through `CommunicationError`
 - API version "2025-06-30" routes:

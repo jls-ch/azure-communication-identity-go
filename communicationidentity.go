@@ -1,3 +1,8 @@
+// Unofficial client library for REST API calls to 'Azure Communication Identity' routes
+// on a given 'Azure Communication Services' endpoint (WIP).
+//
+// The main entry point is [communicationidentity.New] to create a new [communicationidentity.CommunicationIdentityClient],
+// check the examples section for more guidance.
 package communicationidentity
 
 import (
