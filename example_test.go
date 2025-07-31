@@ -21,7 +21,11 @@ func Example() {
 	if err != nil {
 		panic(err)
 	}
-	token, err := client.TokenForTeamsUser(context.TODO(), "USER-OID", "ENTRA-TOKEN-WITH-TEAMS-SCOPE")
+	token, err := client.TokenForTeamsUser(
+		context.TODO(),
+		"USER-OID",
+		"ENTRA-TOKEN-WITH-TEAMS-SCOPE",
+	)
 	if err != nil {
 		panic(err)
 	}

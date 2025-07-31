@@ -163,8 +163,7 @@ type communicationErrorResponse struct {
 	Error CommunicationError `json:"error"`
 }
 
-//
-// [Azure Documentation]: https://learn.microsoft.com/en-us/rest/api/communication/identity/communication-identity/exchange-teams-user-access-token?view=rest-communication-identity-2025-06-30&tabs=HTTP
+// Azure Documentation: https://learn.microsoft.com/en-us/rest/api/communication/identity/communication-identity/exchange-teams-user-access-token?view=rest-communication-identity-2025-06-30&tabs=HTTP
 func (client CommunicationIdentityClient) TokenForTeamsUser(
 	ctx context.Context,
 	userOid string,
