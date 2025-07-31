@@ -1,5 +1,5 @@
 # azure-communication-identity-go
-Client library for REST APIs to Azure Communication Identity Services for Golang without dependencies (WIP).
+Unofficial client library for REST APIs to Azure Communication Identity Services for Golang without dependencies (WIP).
 
 This library was built with Golang 1.24, earlier versions might be able to compile the code but have not been tested.
 
