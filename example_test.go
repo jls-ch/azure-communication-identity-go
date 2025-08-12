@@ -36,6 +36,9 @@ func Example() {
 		[]string{"voip", "chat"},
 		nil,
 	)
+	if err != nil {
+		panic(err)
+	}
 
 	fmt.Printf("AccessToken containing token and expiration date: %v\n", accessToken)
 
