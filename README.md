@@ -34,7 +34,6 @@ func main() {
 	}
 	token, err := client.TokenForTeamsUser(context.TODO(), "USER-OID", "ENTRA-TOKEN-WITH-TEAMS-SCOPE")
 	
-    accessToken, err:= client.CreateCommunicationIdentity(context.TODO(), []string{"voip", "chat"})
     // ...
 }
 
@@ -46,10 +45,10 @@ func main() {
 Implemented:
 - HMAC request and header signing
 - [Azure Communication Services errors](https://learn.microsoft.com/en-us/rest/api/communication/identity/communication-identity/create?view=rest-communication-identity-2025-06-30&tabs=HTTP#communicationerror) 
-- [Create](https://learn.microsoft.com/en-us/rest/api/communication/identity/communication-identity/create?view=rest-communication-identity-2025-06-30&tabs=HTTP)
 exposed through `CommunicationError`
 - API version "2025-06-30" routes:
     - [Exchange Teams User Access Token](https://learn.microsoft.com/en-us/rest/api/communication/identity/communication-identity/exchange-teams-user-access-token?view=rest-communication-identity-2025-06-30&tabs=HTTP)
+    - [Create](https://learn.microsoft.com/en-us/rest/api/communication/identity/communication-identity/create?view=rest-communication-identity-2025-06-30&tabs=HTTP)
 
 Planned:
 - API version "2025-06-30" routes:
