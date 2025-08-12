@@ -33,6 +33,8 @@ func main() {
 		panic(err)
 	}
 	token, err := client.TokenForTeamsUser(context.TODO(), "USER-OID", "ENTRA-TOKEN-WITH-TEAMS-SCOPE")
+	
+    accessToken, err:= client.CreateCommunicationIdentity(context.TODO(), []string{"voip", "chat"})
     // ...
 }
 
@@ -44,13 +46,13 @@ func main() {
 Implemented:
 - HMAC request and header signing
 - [Azure Communication Services errors](https://learn.microsoft.com/en-us/rest/api/communication/identity/communication-identity/create?view=rest-communication-identity-2025-06-30&tabs=HTTP#communicationerror) 
+- [Create](https://learn.microsoft.com/en-us/rest/api/communication/identity/communication-identity/create?view=rest-communication-identity-2025-06-30&tabs=HTTP)
 exposed through `CommunicationError`
 - API version "2025-06-30" routes:
     - [Exchange Teams User Access Token](https://learn.microsoft.com/en-us/rest/api/communication/identity/communication-identity/exchange-teams-user-access-token?view=rest-communication-identity-2025-06-30&tabs=HTTP)
 
 Planned:
 - API version "2025-06-30" routes:
-    - [Create](https://learn.microsoft.com/en-us/rest/api/communication/identity/communication-identity/create?view=rest-communication-identity-2025-06-30&tabs=HTTP)
     - [Delete](https://learn.microsoft.com/en-us/rest/api/communication/identity/communication-identity/delete?view=rest-communication-identity-2025-06-30&tabs=HTTP)
     - [Issue Access Token](https://learn.microsoft.com/en-us/rest/api/communication/identity/communication-identity/issue-access-token?view=rest-communication-identity-2025-06-30&tabs=HTTP)
     - [Revoke Access Token](https://learn.microsoft.com/en-us/rest/api/communication/identity/communication-identity/revoke-access-tokens?view=rest-communication-identity-2025-06-30&tabs=HTTP)
