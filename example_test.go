@@ -31,5 +31,16 @@ func Example() {
 	}
 	fmt.Printf("token for teams user: %#v\n", token)
 
+	accessToken, err := client.CreateCommunicationIdentity(
+		context.TODO(),
+		[]string{"voip", "chat"},
+		nil,
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("AccessToken containing token and expiration date: %v\n", accessToken)
+
 	// ...
 }

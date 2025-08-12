@@ -32,11 +32,12 @@ type CommunicationIdentityClient struct {
 type azAPIVersion string
 
 const (
-	tokenForTeamsUserEndpoint              = "/teamsUser/:exchangeAccessToken"
-	apiVersion                azAPIVersion = "2025-06-30"
-	msAuthHeader                           = "Authorization"
-	msDateHeader                           = "x-ms-date"
-	msContentHashHeader                    = "x-ms-content-sha256"
+	tokenForTeamsUserEndpoint                        = "/teamsUser/:exchangeAccessToken"
+	createCommunicationIdentityEndpoint              = "/identities"
+	apiVersion                          azAPIVersion = "2025-06-30"
+	msAuthHeader                                     = "Authorization"
+	msDateHeader                                     = "x-ms-date"
+	msContentHashHeader                              = "x-ms-content-sha256"
 )
 
 // constructor for the REST Client
@@ -135,6 +136,15 @@ type CommunicationIdentityAccessToken struct {
 	ExpiresOn time.Time `json:"expiresOn"`
 }
 
+type CommunicationIdentityAccessTokenResult struct {
+	AccessToken CommunicationIdentityAccessToken `json:"accessToken"`
+	Identity    CommunicationIdentity            `json:"identity"`
+}
+
+type CommunicationIdentity struct {
+	ID string `json:"id"`
+}
+
 // Machine-readable errors returned from Azure Communication Services endpoints.
 // `Code` can be used to handle errors in a stable way, though microsoft may add
 // new codes in the future
@@ -216,7 +226,8 @@ func (client CommunicationIdentityClient) TokenForTeamsUser(
 		var tokenResponse CommunicationIdentityAccessToken
 		if err := json.NewDecoder(response.Body).Decode(&tokenResponse); err != nil {
 			return CommunicationIdentityAccessToken{}, fmt.Errorf(
-				"failed to parse response body for status OK",
+				"failed to parse response body for status OK %v",
+				err,
 			)
 		}
 		return tokenResponse, nil
@@ -228,5 +239,75 @@ func (client CommunicationIdentityClient) TokenForTeamsUser(
 		}
 
 		return CommunicationIdentityAccessToken{}, fmt.Errorf("ACS responded with non-OK status(%v), error: %w", response.Status, &errorResponse.Error)
+	}
+}
+
+type createAndReturnTokenRequest struct {
+	Scope  []string `json:"createTokenWithScopes"`
+	Expire *int32   `json:"expiresInMinutes,omitempty"`
+}
+
+// CreateCommunicationIdentity Azure Documentation https://learn.microsoft.com/en-us/rest/api/communication/identity/communication-identity/create?view=rest-communication-identity-2025-06-30&tabs=HTTP
+func (client CommunicationIdentityClient) CreateCommunicationIdentity(
+	ctx context.Context,
+	scope []string,
+	expireInMinutes *int32,
+) (CommunicationIdentityAccessTokenResult, error) {
+	fullResourceURL := client.buildEndpointURL(createCommunicationIdentityEndpoint, apiVersion)
+
+	requestBody, err := json.Marshal(createAndReturnTokenRequest{
+		Scope:  scope,
+		Expire: expireInMinutes,
+	})
+	if err != nil {
+		return CommunicationIdentityAccessTokenResult{}, fmt.Errorf(
+			"failed to build requeset body: %w",
+			err,
+		)
+	}
+
+	request, err := client.buildSignedRequest(fullResourceURL, requestBody)
+
+	if err != nil {
+		return CommunicationIdentityAccessTokenResult{}, fmt.Errorf(
+			"failed to create signed request: %w",
+			err,
+		)
+	}
+	request = request.WithContext(ctx)
+	response, err := http.DefaultClient.Do(request)
+	if err != nil {
+		return CommunicationIdentityAccessTokenResult{}, fmt.Errorf(
+			"failed to send reqeust to ACS: %w",
+			err,
+		)
+	}
+	defer func() {
+		if err := response.Body.Close(); err != nil {
+			// TODO: do something nicer here
+			fmt.Fprintf(
+				os.Stderr,
+				"'Communication Identity' failed to close response body: %v",
+				err,
+			)
+		}
+	}()
+	if response.StatusCode == http.StatusCreated {
+		var tokenResponse CommunicationIdentityAccessTokenResult
+		if err := json.NewDecoder(response.Body).Decode(&tokenResponse); err != nil {
+			return CommunicationIdentityAccessTokenResult{}, fmt.Errorf(
+				"failed to parse response body for status OK: %v",
+				err,
+			)
+		}
+		return tokenResponse, nil
+
+	} else {
+		var errorResponse communicationErrorResponse
+		if err := json.NewDecoder(response.Body).Decode(&errorResponse); err != nil {
+			return CommunicationIdentityAccessTokenResult{}, fmt.Errorf("ACS responded with non-OK status(%v) and response body was not parseable", response.Status)
+		}
+
+		return CommunicationIdentityAccessTokenResult{}, fmt.Errorf("ACS responded with non-OK status(%v), error: %w", response.Status, &errorResponse.Error)
 	}
 }
