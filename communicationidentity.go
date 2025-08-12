@@ -226,7 +226,8 @@ func (client CommunicationIdentityClient) TokenForTeamsUser(
 		var tokenResponse CommunicationIdentityAccessToken
 		if err := json.NewDecoder(response.Body).Decode(&tokenResponse); err != nil {
 			return CommunicationIdentityAccessToken{}, fmt.Errorf(
-				"failed to parse response body for status OK",
+				"failed to parse response body for status OK %v",
+				err,
 			)
 		}
 		return tokenResponse, nil
@@ -291,7 +292,8 @@ func (client CommunicationIdentityClient) CreateCommunicationIdentity(ctx contex
 		var tokenResponse CommunicationIdentityAccessTokenResult
 		if err := json.NewDecoder(response.Body).Decode(&tokenResponse); err != nil {
 			return CommunicationIdentityAccessTokenResult{}, fmt.Errorf(
-				"failed to parse response body for status OK",
+				"failed to parse response body for status OK: %v",
+				err,
 			)
 		}
 		return tokenResponse, nil
