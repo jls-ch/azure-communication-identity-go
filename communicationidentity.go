@@ -138,9 +138,11 @@ type CommunicationIdentityAccessToken struct {
 
 type CommunicationIdentityAccessTokenResult struct {
 	AccessToken CommunicationIdentityAccessToken `json:"accessToken"`
-	Identity    struct {
-		ID string `json:"id"`
-	} `json:"identity"`
+	Identity    CommunicationIdentity            `json:"identity"`
+}
+
+type CommunicationIdentity struct {
+	ID string `json:"id"`
 }
 
 // Machine-readable errors returned from Azure Communication Services endpoints.
