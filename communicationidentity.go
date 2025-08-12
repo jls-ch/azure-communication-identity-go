@@ -138,8 +138,9 @@ type CommunicationIdentityAccessToken struct {
 
 type CommunicationIdentityAccessTokenResult struct {
 	AccessToken CommunicationIdentityAccessToken `json:"accessToken"`
-	// TODO maybe need to move this to a struct
-	Identity string `json:"id"`
+	Identity    struct {
+		ID string `json:"id"`
+	} `json:"identity"`
 }
 
 // Machine-readable errors returned from Azure Communication Services endpoints.
@@ -175,7 +176,7 @@ type communicationErrorResponse struct {
 	Error CommunicationError `json:"error"`
 }
 
-// TokenForTeamsUser Azure Documentation: https://learn.microsoft.com/en-us/rest/api/communication/identity/communication-identity/exchange-teams-user-access-token?view=rest-communication-identity-2025-06-30&tabs=HTTP
+// Azure Documentation: https://learn.microsoft.com/en-us/rest/api/communication/identity/communication-identity/exchange-teams-user-access-token?view=rest-communication-identity-2025-06-30&tabs=HTTP
 func (client CommunicationIdentityClient) TokenForTeamsUser(
 	ctx context.Context,
 	userOid string,
@@ -239,15 +240,17 @@ func (client CommunicationIdentityClient) TokenForTeamsUser(
 }
 
 type createAndReturnTokenRequest struct {
-	Scope  string `json:"createTokenWithScopes"`
-	Expire *int32 `json:"expiresInMinutes,omitempty"`
+	Scope  []string `json:"createTokenWithScopes"`
+	Expire *int32   `json:"expiresInMinutes,omitempty"`
 }
 
-// CreateAndReturnToken https://learn.microsoft.com/en-us/rest/api/communication/identity/communication-identity/create?view=rest-communication-identity-2025-06-30&tabs=HTTP
-func (client CommunicationIdentityClient) CreateAndReturnToken(ctx context.Context) (CommunicationIdentityAccessTokenResult, error) {
+// CreateCommunicationIdentity Azure Documentation https://learn.microsoft.com/en-us/rest/api/communication/identity/communication-identity/create?view=rest-communication-identity-2025-06-30&tabs=HTTP
+func (client CommunicationIdentityClient) CreateCommunicationIdentity(ctx context.Context, scope []string, expireInMinutes *int32) (CommunicationIdentityAccessTokenResult, error) {
 	fullResourceURL := client.buildEndpointURL(createUserAndTokenEndpoint, apiVersion)
+
 	requestBody, err := json.Marshal(createAndReturnTokenRequest{
-		Scope: "voip",
+		Scope:  scope,
+		Expire: expireInMinutes,
 	})
 	if err != nil {
 		return CommunicationIdentityAccessTokenResult{}, fmt.Errorf(
@@ -282,7 +285,7 @@ func (client CommunicationIdentityClient) CreateAndReturnToken(ctx context.Conte
 			)
 		}
 	}()
-	if response.StatusCode == http.StatusOK {
+	if response.StatusCode == http.StatusCreated {
 		var tokenResponse CommunicationIdentityAccessTokenResult
 		if err := json.NewDecoder(response.Body).Decode(&tokenResponse); err != nil {
 			return CommunicationIdentityAccessTokenResult{}, fmt.Errorf(
