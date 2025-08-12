@@ -32,12 +32,12 @@ type CommunicationIdentityClient struct {
 type azAPIVersion string
 
 const (
-	tokenForTeamsUserEndpoint               = "/teamsUser/:exchangeAccessToken"
-	createUserAndTokenEndpoint              = "/identities"
-	apiVersion                 azAPIVersion = "2025-06-30"
-	msAuthHeader                            = "Authorization"
-	msDateHeader                            = "x-ms-date"
-	msContentHashHeader                     = "x-ms-content-sha256"
+	tokenForTeamsUserEndpoint                        = "/teamsUser/:exchangeAccessToken"
+	createCommunicationIdentityEndpoint              = "/identities"
+	apiVersion                          azAPIVersion = "2025-06-30"
+	msAuthHeader                                     = "Authorization"
+	msDateHeader                                     = "x-ms-date"
+	msContentHashHeader                              = "x-ms-content-sha256"
 )
 
 // constructor for the REST Client
@@ -246,7 +246,7 @@ type createAndReturnTokenRequest struct {
 
 // CreateCommunicationIdentity Azure Documentation https://learn.microsoft.com/en-us/rest/api/communication/identity/communication-identity/create?view=rest-communication-identity-2025-06-30&tabs=HTTP
 func (client CommunicationIdentityClient) CreateCommunicationIdentity(ctx context.Context, scope []string, expireInMinutes *int32) (CommunicationIdentityAccessTokenResult, error) {
-	fullResourceURL := client.buildEndpointURL(createUserAndTokenEndpoint, apiVersion)
+	fullResourceURL := client.buildEndpointURL(createCommunicationIdentityEndpoint, apiVersion)
 
 	requestBody, err := json.Marshal(createAndReturnTokenRequest{
 		Scope:  scope,
